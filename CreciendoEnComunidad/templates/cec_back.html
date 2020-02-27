@@ -1,0 +1,384 @@
+<html>
+{% load static %}
+{% csrf_token %}
+
+<head>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+    <link rel="stylesheet" href="{% static '/css/estilos.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
+    <script>
+        function printDiv(nombreDiv) {
+            var contenido = document.getElementById(nombreDiv).innerHTML;
+            var contenidoOriginal = document.body.innerHTML;
+
+            document.body.innerHTML = contenido;
+
+            window.print();
+
+            document.body.innerHTML = contenidoOriginal;
+
+        }
+    </script>
+    
+    <title>{% block title %} {% endblock %}</title>
+
+    <script>
+        (function ($) {
+            showSwal = function (type, status, add) {
+                'use strict';
+                if (type === 'show-past') {
+                    if (status === '0') {
+                        swal({
+                            title: 'Atencion!',
+                            text: 'Se incluye en la búsqueda actividades que ya fueron realizadas',
+                            type: 'warning',
+                            button: {
+                                text: "Seguir",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-primary"
+                            }
+                        },
+                            function () {
+                                window.location.href = "/buscar/palabra/?p=" + add + "&t=1";
+                            })
+
+                    } else {
+                        window.location.href = "/buscar/palabra/?p=" + add + "&t=0";
+                    }
+
+
+                } else if (type === 'publish-activitie') {
+                    swal({
+                        title: 'Felicidades!',
+                        text: 'Se ha publicado la actividad',
+                        type: 'success',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-primary"
+                        }
+                    })
+
+                } else if (type === 'create-comunity') {
+                    swal({
+                        title: 'Felicidades!',
+                        text: 'Se ha creado la comunidad',
+                        type: 'success',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-primary"
+                        }
+                    })
+
+                } else if (type === 'create-colectivo') {
+                    swal({
+                        title: 'Felicidades!',
+                        text: 'Se ha creado su colectivo',
+                        type: 'success',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-primary"
+                        }
+                    })
+
+                } else if (type === 'unirse-actividad') {
+                    swal({
+                        title: 'Felicidades!',
+                        text: 'Se ha unido para ayudar a la actividad',
+                        type: 'success',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-primary"
+                        }
+                    })
+
+                } else if (type === 'actividad_culminada') {
+                    swal({
+                        title: 'Listo!',
+                        text: 'Se ha dado por colminada la actividad',
+                        type: 'success',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-primary"
+                        }
+                    })
+
+                } else {
+                    swal("Error occured !");
+                }
+            }
+
+        })(jQuery);
+
+
+
+        function tab_change(id) {
+            if (id == "tab_title_1") {
+                $("#tab_title_1").addClass("colectivo-activo");
+                $("#tab_title_1").removeClass("colectivo");
+                $("#tab_title_2").addClass("colectivo");
+                $("#tab_title_2").removeClass("colectivo-activo");
+                $("#tab_box_2").css("display", "none");
+                $("#tab_box_1").css("display", "block");
+            } else if (id == "tab_title_2") {
+                $("#tab_title_1").removeClass("colectivo-activo");
+                $("#tab_title_1").addClass("colectivo");
+                $("#tab_title_2").removeClass("colectivo");
+                $("#tab_title_2").addClass("colectivo-activo");
+                $("#tab_box_2").css("display", "block");
+                $("#tab_box_1").css("display", "none");
+            }
+
+        }
+
+
+    </script>
+    <script>
+        function mostrar_mensaje(tipo, value) {
+            $("#mensaje_back").css("display", "block");
+            $("#mensaje_box").css("display", "block");
+            if (tipo == 'unirse') {
+                var tempo = $("#contenido_mensaje").html();
+                $("#mensaje_box").html(tempo)
+                $("#colectivo_actividad_id").val(value);
+            } else if (tipo == 'culminar_actividad') {
+                var tempo = $("#contenido_mensaje").html();
+                $("#mensaje_box").html(tempo)
+                $("#actividad_v").val(value);
+            }
+        }
+
+        function salir_mensaje() {
+            $("#mensaje_back").css("display", "none");
+            $("#mensaje_box").css("display", "none");
+        }
+    </script>
+
+
+
+</head>
+
+<body>
+
+
+    <div id="mensaje_back"
+        style="background-color: black; position: fixed; height: 100%; width: 100%; z-index: 10000; opacity: 0.5; display: none; "
+        onclick="salir_mensaje();">as</div>
+    <div id="mensaje_box"
+        style="background-color: white; position: fixed; height: auto; width: 800px; z-index: 20000;   margin-left: -400px; left: 50%; top:150px;display: none; border-radius: 20px; padding: 30px;">
+    </div>
+
+    <!-- Header -->
+    <div id="header" class="navbar sticky-top navbar-dark bg-primary mb-3">
+        <a class="navbar-brand" href="/"><img src="{% static '/img/simbolo.png' %}" width="35px" height="auto"
+                class="mr-2">Creciendo en Comunidad</a>
+        <div class="form-inline">
+            {% if user.is_authenticated %}
+            <p class="my-2 my-lg-0 mr-4" style="color: white; font-size: 18px;">
+                <a style="color: white;">Hola, {{user.first_name}}</a> &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="/cuenta/logout/" style="color: white;">Salir</a>
+            </p>
+
+            {% else %}
+            <p class="my-2 my-lg-0 mr-4" style="color: white; font-size: 18px;">
+                <a href="/cuenta/login/" style="color: white;" class="mr-2 ml-2">Entrar</a> &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="/cuenta/registrar/" style="color: white;">Registrarse</a>
+            </p>
+            {% endif %}
+            <form class="form-inline my-2 my-lg-0" method="GET" action="/buscar/palabra/">
+                <input class="form-control mr-sm-2" type="search" placeholder="Escribe aqui" aria-label="Search"
+                    name="p">
+                <input type="hidden" value="0" name="t">
+                <button class="btn btn-success  my-2 my-sm-0" type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+    <!-- Header -->
+
+    {% block content %} {% endblock %}
+
+
+
+    <!-- Footer -->
+    <footer class="page-footer font-small pt-4 mt-3" style="background-color: #e3f2fd;">
+
+        <!-- Footer Links -->
+        <div class="container text-center text-md-left">
+
+            <!-- Grid row -->
+            <div class="row">
+
+                <!-- Grid column -->
+                <div class="col-md-4 mx-auto">
+
+                    <!-- Content -->
+                    <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Creciendo en Comunidad</h5>
+                    <p>¿No encontraste lo que estabas buscando? Busca por aquí cosas que te interesan</p>
+
+                </div>
+                <!-- Grid column -->
+
+                <hr class="clearfix w-100 d-md-none">
+
+                <!-- Grid column -->
+                <div class="col-md-2 mx-auto">
+
+                    <!-- Links -->
+                    <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Información</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Libro de reclamaciones</a>
+                        </li>
+                        <li>
+                            <a href="#!">Terminos y condiciones</a>
+                        </li>
+                        <li>
+                            <a href="#!">Mapa del sitio</a>
+                        </li>
+                        <li>
+                            <a href="#!">Politicas</a>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- Grid column -->
+
+                <hr class="clearfix w-100 d-md-none">
+
+                <!-- Grid column -->
+                <div class="col-md-2 mx-auto">
+
+                    <!-- Links -->
+                    <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Consultas</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Como registrarse</a>
+                        </li>
+                        <li>
+                            <a href="#!">Como puedo ayudar</a>
+                        </li>
+                        <li>
+                            <a href="#!">Quienes pueden pedir colaboracion</a>
+                        </li>
+                        <li>
+                            <a href="#!">Preguntas frecuentes</a>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- Grid column -->
+
+                <hr class="clearfix w-100 d-md-none">
+
+                <!-- Grid column -->
+                <div class="col-md-2 mx-auto">
+
+                    <!-- Links -->
+                    <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Enlaces</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Inicio</a>
+                        </li>
+                        <li>
+                            <a href="#!">Acerca de CEC</a>
+                        </li>
+                        <li>
+                            <a href="#!">Contacto</a>
+                        </li>
+                        <li>
+                            <a href="#!">Galeria</a>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- Grid column -->
+
+            </div>
+            <!-- Grid row -->
+
+        </div>
+        <!-- Footer Links -->
+
+        <hr>
+
+        <!-- Call to action -->
+        <ul class="list-unstyled list-inline text-center py-2">
+            <li class="list-inline-item">
+                <h5 class="mb-1"><a href="/cuenta/registrar/" style="color: #333333;">Regístrate gratis</a> o </h5>
+            </li>
+            <li class="list-inline-item">
+                <a href="/cuenta/login/" class="btn btn-danger btn-rounded">Inicia sesión</a>
+            </li>
+        </ul>
+        <!-- Call to action -->
+
+        <hr>
+
+        <!-- Social buttons -->
+        <ul class="list-unstyled list-inline text-center">
+            <li class="list-inline-item">
+                <a class="btn-floating btn-fb mx-1">
+                    <i class="fab fa-facebook-f"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn-floating btn-tw mx-1">
+                    <i class="fab fa-twitter"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn-floating btn-gplus mx-1">
+                    <i class="fab fa-google-plus-g"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn-floating btn-li mx-1">
+                    <i class="fab fa-linkedin-in"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn-floating btn-dribbble mx-1">
+                    <i class="fab fa-dribbble"> </i>
+                </a>
+            </li>
+        </ul>
+        <!-- Social buttons -->
+
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3">© 2020 Copyright:
+            <a href="https://mdbootstrap.com/education/bootstrap/"> cecperu.com</a>
+        </div>
+        <!-- Copyright -->
+
+    </footer>
+    <!-- Footer -->
+</body>
+
+</html>

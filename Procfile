@@ -1,0 +1,1 @@
+web: gunicorn CreciendoEnComunidad.wsgi --log-file -

@@ -1,0 +1,151 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Colectivos {% endblock %}
+
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+
+<div style="text-align: center;" class="m-5">
+    <h1>Colectivos</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="/actividad/listar/" role="tab"
+                    aria-controls="v-pills-home" aria-selected="true"
+                    onclick="javascript:window.location.href = '/actividad/listar/';"><img
+                        src="{% static 'img/menu/recomendaciones.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/actividad/listar/';">Recomendaciones</a>
+
+                <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/listar/"
+                    role="tab" aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/listar/';"><img
+                        src="{% static 'img/menu/colectivo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/listar/';">Colectivos</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/crear/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/crear/';"><img
+                        src="{% static 'img/menu/crearcolectivo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/crear/';">Crear colectivo</a>
+
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/actividad/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/actividad/';"><img
+                        src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/actividad/';">Actividad que ayudo</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/realizadas/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/realizadas/';"><img
+                        src="{% static 'img/menu/realizado.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/realizadas/';">Actividades realizadas</a>
+                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/valores/"
+                        role="tab" aria-controls="v-pills-profile" aria-selected="false"
+                        onclick="javascript:window.location.href = '/colectivo/valores/';"><img
+                            src="{% static 'img/menu/valores.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/colectivo/valores/';">Valores desarrollados</a>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row mb-3 tab-colectivo">
+                <div class="col text-center colectivo-activo" onclick="tab_change(id);" id="tab_title_1">
+                    Nuevos colectivos
+                </div>
+                <div class="col text-center colectivo" onclick="tab_change(id);" id="tab_title_2">
+                    Mis colectivos
+                </div>
+            </div>
+            <div class="row" id="tab_box_1" style="display: block;">
+                {% if user.is_authenticated %}
+                    {% if nuevo_colectivo %}
+                    {% for x in nuevo_colectivo %}
+                    <section>
+                        <div class="card mt-3 mb-3">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <img src="{{x.imagen_principal}}" style="height: 100%; width: 100%;">
+                                </div>
+                                <div class="col-md-9 px-3 p-3">
+                                    <div class="card-block px-3">
+                                        <h4 class="card-title"><a href="/colectivo/ver/?id={{x.id}}">{{x.titulo}}</a></h4>
+                                        <p class="card-text">{{x.descripcion}}</p>
+                                        <p class="card-text text-muted"></p>
+                                        <button type="button" class="btn btn-success">Unirse a la comunidad</button>
+                                        <button type="button" class="btn btn-warning">Añadir a intereses</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+                    {% endfor %}
+                    {% endif %}
+                {% else %}
+                {% if invitado_colectivo %}
+                {% for x in invitado_colectivo %}
+                <section>
+                    <div class="card mt-3 mb-3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="{{x.imagen_principal}}" style="height: 100%; width: 100%;">
+                            </div>
+                            <div class="col-md-9 px-3 p-3">
+                                <div class="card-block px-3">
+                                    <h4 class="card-title"><a href="/colectivo/ver/?id={{x.id}}">{{x.titulo}}</a></h4>
+                                    <p class="card-text">{{x.descripcion}}</p>
+                                    <p class="card-text text-muted"></p>
+                                    <button type="button" class="btn btn-success">Unirse al colectivo</button>
+                                    <button type="button" class="btn btn-warning">Añadir a intereses</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+                {% endfor %}
+                {% endif %}
+                {% endif %}
+            </div>
+            <div class="row" id="tab_box_2" style="display: none;">
+                {% if user.is_authenticated %}
+                {% if colectivo %}
+                {% for x in colectivo %}
+                <section>
+                    <div class="card mt-3 mb-3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="{{x.id_colectivo.imagen_principal}}" style="height: 100%; width: 100%;">
+                            </div>
+                            <div class="col-md-9 px-3 p-3">
+                                <div class="card-block px-3">
+                                    <h4 class="card-title"><a
+                                            href="/colectivo/ver/?id={{x.id_colectivo.id}}">{{x.id_colectivo.titulo}}</a>
+                                    </h4>
+                                    <p class="card-text">{{x.id_colectivo.descripcion}}</p>
+                                    <p class="card-text text-muted"></p>
+                                    <button type="button" class="btn btn-danger">Salir del colectivo</button>
+                                    <button type="button" class="btn btn-success">Añadir más miembros</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+                {% endfor %}
+                {% else %}
+                <div class="text-center p-3"> <h1>:(</h1><br><br><h5>No estás en ningún colectivo por ahora. Puedes unirte a alguno o crear uno nuevo </h5><br></div>
+                {% endif %}
+                
+                {% else %}
+                <div class="text-center"> Tienes que iniciar sesion para ver tus colectivos: <br><br><a
+                        href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

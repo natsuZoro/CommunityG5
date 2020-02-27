@@ -1,0 +1,20 @@
+{% extends "cec_back.html" %}
+{% block title %} Registrarse en CEC {% endblock %}
+
+{% block content %}
+<div style="text-align: center;" class="m-5">
+    <h1>Ingresa tus datos para el registro</h1>
+</div>
+
+<div class="container" style="width: 700px;">
+    <form method="POST" id="registrar">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br>
+        <div class="text-center"><button type="submit" class="btn btn-success text-center mr-2">Guardar</button><button type="button" class="btn btn-warning mr-2"
+            onclick="document.getElementById('registrar').reset();">Limpiar el formulario</button><button type="button" class="btn btn-danger"
+            onclick="javascript:window.location.href = '../';">Cancelar</button>        </div>
+        
+    </form>
+</div>
+{% endblock %}

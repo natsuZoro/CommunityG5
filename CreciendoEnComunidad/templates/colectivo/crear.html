@@ -1,0 +1,141 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Crear colectivo {% endblock %}
+
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+<script>
+    var pathname = $(location).attr('search');
+    if (pathname == '?e=1') {
+        showSwal('create-colectivo','','');
+    }
+
+    function cargar_lider(){
+        if($("#l").val()=="0"){
+            $("#l").val("1");
+        }else{
+            $("#l").val("0");
+        }
+    }
+
+</script>
+<div style="text-align: center;" class="m-5">
+    <h1>Crear colectivo</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="/actividad/listar/" role="tab"
+                    aria-controls="v-pills-home" aria-selected="true" onclick="javascript:window.location.href = '/actividad/listar/';"><img
+                        src="{% static 'img/menu/recomendaciones.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/actividad/listar/';">Recomendaciones</a>
+
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/listar/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/colectivo/listar/';"><img
+                        src="{% static 'img/menu/colectivo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/listar/';">Colectivos</a>
+                <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/crear/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/colectivo/crear/';"><img
+                        src="{% static 'img/menu/crearcolectivo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/crear/';">Crear colectivo</a>
+
+
+                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/actividad/" role="tab"
+                        aria-controls="v-pills-profile" aria-selected="false"
+                        onclick="javascript:window.location.href = '/colectivo/actividad/';"><img
+                            src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/colectivo/actividad/';">Actividad que ayudo</a>
+                            <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/realizadas/" role="tab"
+                            aria-controls="v-pills-profile" aria-selected="false"
+                            onclick="javascript:window.location.href = '/colectivo/realizadas/';"><img
+                                src="{% static 'img/menu/realizado.png' %}" width="25px" class="mr-2"
+                                onclick="javascript:window.location.href = '/colectivo/realizadas/';">Actividades realizadas</a>
+                                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/valores/"
+                                role="tab" aria-controls="v-pills-profile" aria-selected="false"
+                                onclick="javascript:window.location.href = '/colectivo/valores/';"><img
+                                    src="{% static 'img/menu/valores.png' %}" width="25px" class="mr-2"
+                                    onclick="javascript:window.location.href = '/colectivo/valores/';">Valores desarrollados</a>
+            </div>
+        </div>
+        <div class="col">
+            {% if user.is_authenticated %}
+            <form action="/colectivo/crear/" method="POST" id="crear_colectivo" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Titulo: </label>
+                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                                placeholder="Socios de la biodiversidad" name="titulo" maxlength="50" required>
+                            <small id="emailHelp" class="form-text text-muted">Máximo de 100 caracteres.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Escribe la descipción de la actividad: </label>
+                            <textarea type="text" name="descripcion" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp"
+                                placeholder="Por ejemplo: Somos un grupo en crecimiento amantes de la biodiversidad"
+                                maxlength="250" required></textarea>
+                            <small id="emailHelp" class="form-text text-muted">Recuerda ser conciso</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Escribe los usuarios de los integrantes separados por una coma: <span style="color:red">(el primer usuario es el líder)</span> </label>
+                            <textarea type="text" name="integrantes" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp"
+                                placeholder="zrojas,mquispe,smvelasquez,etc"
+                                maxlength="250" required></textarea>
+                            <label><input type="checkbox" name="lider_fundador" value="1" class="mt-2 ml-2" onclick="cargar_lider();" /> Yo soy el lider del colectivo</label>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Sube la foto sobre el colectivo y su descripción: </label>
+                            <input type="file" name="imagenes" class="form-control" required> <br><br>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">.</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                                placeholder="Aqui detalla cosas sobre la foto" name="foto_descripcion" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="text-align: center;">
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary">Crear colectivo</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-warning"
+                            onclick="document.getElementById('crear_colectivo').reset();">Limpiar el formulario</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-danger"
+                            onclick="javascript:window.location.href = '../';">Cancelar</button><br><br>
+                    </div>
+                </div>
+                <input type="text" value="0" name="lider" id="l" style="display: none;">
+            </form>
+            {% else %}
+            
+            <div class="text-center"> Tienes que iniciar sesion para poder crear un colectivo. <br><br><a href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

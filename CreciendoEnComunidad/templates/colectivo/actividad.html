@@ -1,0 +1,111 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Actividades que ayudo {% endblock %}
+
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+<script>
+    var pathname = $(location).attr('search');
+    if (pathname == '?e=1') {
+        showSwal('unirse-actividad', '', '');
+    }
+
+</script>
+
+
+<div style="text-align: center;" class="m-5">
+    <h1>Actividades que ayudo</h1>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="/actividad/listar/" role="tab"
+                    aria-controls="v-pills-home" aria-selected="true"
+                    onclick="javascript:window.location.href = '/actividad/listar/';"><img
+                        src="{% static 'img/menu/recomendaciones.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/actividad/listar/';">Recomendaciones</a>
+
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/listar/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/listar/';"><img
+                        src="{% static 'img/menu/colectivo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/listar/';">Colectivos</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/crear/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/crear/';"><img
+                        src="{% static 'img/menu/crearcolectivo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/crear/';">Crear colectivo</a>
+
+                <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/actividad/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/actividad/';"><img
+                        src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/actividad/';">Actividad que ayudo</a>
+                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/realizadas/" role="tab"
+                        aria-controls="v-pills-profile" aria-selected="false"
+                        onclick="javascript:window.location.href = '/colectivo/realizadas/';"><img
+                            src="{% static 'img/menu/realizado.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/colectivo/realizadas/';">Actividades realizadas</a>
+                            <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/valores/"
+                            role="tab" aria-controls="v-pills-profile" aria-selected="false"
+                            onclick="javascript:window.location.href = '/colectivo/valores/';"><img
+                                src="{% static 'img/menu/valores.png' %}" width="25px" class="mr-2"
+                                onclick="javascript:window.location.href = '/colectivo/valores/';">Valores desarrollados</a>
+            </div>
+        </div>
+        <div class="col">
+            {% if user.is_authenticated %}
+            {% if actividades %}
+            {% for x in actividades %}
+            <section>
+                <div class="card mt-3 mb-3">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{x.id_actividad.imagen_principal}}" style="height: 100%; width: 100%;">
+                        </div>
+                        <div class="col-md-8 px-3 p-3">
+                            <div class="card-block px-3">
+                                <h4 class="card-title"><a href="/actividad/ver/?id={{x.id_actividad.id}}">{{x.id_actividad.titulo}}</a>
+                                </h4>
+                                <p class="card-text">{{x.descripcion}}</p>
+                                <p class="card-text text-muted"><small>Programado para el:
+                                        {{x.id_actividad.fecha_inicio.day}}/{{x.id_actividad.fecha_inicio.month}}/{{x.id_actividad.fecha_inicio.year}}</small>
+                                </p>
+                                {% if x.id_actividad.culminada %}
+                                    <b>Estado:</b> Culminada
+                                {% else %}
+                                    <b>Estado:</b> En proceso
+                                {% endif %}
+                                <br><br>
+                                {% if user.username == x.id_colectivo.lider.username or x.id_usuario.id == user.id %}
+                                    {% if x.id_actividad.culminada %}
+                                    <button type="button" class="btn btn-primary" 
+                                    onclick="javascript:window.location.href = '/colectivo/calificar/?a={{x.id_actividad.id}}'">Calificar participantes</button>
+                                    {% endif %}
+                                {% endif %}
+                                <button type="button" class="btn btn-danger" value="{{x.id}}"
+                                    onclick="mostrar_mensaje('salir_actividad',this.value);">Salir de la actividad</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+            {% endfor %}
+            {% else %}
+            <div class="text-center p-3"> <h1>:(</h1><br><br><h5>No estás ayudando actualmente a alguna actividad. Puedes unirte a cualquiera en Recomendaciones </h5><br></div>
+            {% endif %}
+            {% else %}
+            
+            <div class="text-center"> Tienes que iniciar sesion para poder ver las actividades que ayudas <br><br><a href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

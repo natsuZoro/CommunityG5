@@ -1,0 +1,104 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Actividades que ayudo {% endblock %}
+
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+<script>
+    var pathname = $(location).attr('search');
+    if (pathname == '?e=1') {
+        showSwal('actividad_culminada', '', '');
+    }
+
+</script>
+<div id="contenido_mensaje" style="display: none;" >
+    <form method="POST" action="/actividad/culminar/">
+        {% csrf_token %}
+        <h4>¿Estás seguro que quieres culiminar la actividad?</h4> <br /><br />
+        <input type="text" id="actividad_v" value="" style="display: none;" name="actividad">
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-success">Sí, dar por culminado</button>
+        </div>
+    </form>
+</div>
+
+
+<div style="text-align: center;" class="m-5">
+    <h1>Mis actividades</h1>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="/comunidad/listar/" role="tab"
+                        aria-controls="v-pills-home" aria-selected="true" onclick="javascript:window.location.href = '/comunidad/listar/';"><img
+                            src="{% static 'img/menu/comunidad2.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/comunidad/listar/';">Comunidades</a>
+    
+                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/actividad/crear/" role="tab"
+                        aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/actividad/crear/';"><img
+                            src="{% static 'img/menu/actividades.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/actividad/crear/';">Crear actividad</a>
+                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/crear/"
+                        role="tab" aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/comunidad/crear/';"><img
+                            src="{% static 'img/menu/crearcomunidad.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/comunidad/crear/';">Crear comunidad</a>
+
+                            <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/actividad/"
+                            role="tab" aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/comunidad/actividad/';"><img
+                                src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
+                                onclick="javascript:window.location.href = '/comunidad/actividad/';">Mis actividades</a>
+            
+                            </div>
+        </div>
+        </div>
+        <div class="col">
+            {% if user.is_authenticated %}
+            {% if actividades %}
+            {% for x in actividades %}
+            <section>
+                <div class="card mt-3 mb-3">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{x.imagen_principal}}" style="height: 100%; width: 100%;">
+                        </div>
+                        <div class="col-md-8 px-3 p-3">
+                            <div class="card-block px-3">
+                                <h4 class="card-title"><a href="/actividad/ver/?id={{x.id}}">{{x.titulo}}</a>
+                                </h4>
+                                <p class="card-text">{{x.descripcion}}</p>
+                                <p class="card-text text-muted"><small>Programado para el:
+                                        {{x.fecha_inicio.day}}/{{x.fecha_inicio.month}}/{{x.fecha_inicio.year}}</small>
+                                </p>
+                                {% if x.culminada == False %}
+                                <button type="button" class="btn btn-primary" value="{{x.id}}"
+                                    onclick="mostrar_mensaje('culminar_actividad',this.value);">Culminar actividad</button>
+                                {% else %}
+                                <button type="button" class="btn btn-secondary" value="{{x.id}}"
+                                    onclick="mostrar_mensaje('culminar_actividad',this.value);" disabled style="cursor:default">Actividad culminada</button>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+            {% endfor %}
+            {% else %}
+            <div class="text-center p-3"> <h1>:(</h1><br><br><h5>Aún no has creado ninguna actividad o que estés incluido como parte de la comunidad. Puedes crear una nueva actividad solo o con tu comunidad en Crear actividad</h5><br></div>
+            {% endif %}
+
+            {% else %}
+            
+            <div class="text-center"> Tienes que iniciar sesion para poder ver tus actividades <br><br><a href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

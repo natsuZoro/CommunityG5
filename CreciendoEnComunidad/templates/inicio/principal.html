@@ -1,0 +1,42 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Inicio {% endblock %}
+
+
+{% load static %}
+
+{% block content %}
+
+<!-- Jumbotron -->
+<div class="card card-image" style="background-image: url('/static/img/banner_comunidad_1.jpg') ">
+  <div class="text-white text-center rgba-stylish-strong py-5 px-4">
+    <div class="py-5">
+
+      <!-- Content -->
+      <h5 class="h5 orange-text" style="text-shadow: 3px 3px 6px #000000;"><i class="fa fa-camera-retro"></i> Bienvenidos</h5>
+      <h2 class="card-title h1 my-4 py-2" style="text-shadow: 3px 3px 6px #000000;">La página para ayudar y ser ayudado</h2>
+      <p class="mb-4 pb-2 px-md-5 mx-md-5" style="text-shadow: 3px 3px 6px #000000;">Creciendo en comunidad permite el fortalecimiento de los valores, en especial
+        la empatía y la solidaridad reforzando los lazos entre diferentes comunidades.</p>
+      <a class="btn peach-gradient btn-success" href="/actividad/listar/"><i class="fa fa-clone left"></i>¡Quiero ayudar a comunidades!</a>&nbsp;&nbsp;
+      <a class="btn peach-gradient btn-warning" href="/comunidad/listar/"><i class="fa fa-clone left"></i>Necesito buscar ayuda</a>
+
+    </div>
+  </div>
+</div>
+<!-- Jumbotron -->
+<div class="card-deck mt-4 mb-4 mr-1 ml-1">
+  {% if categoria %}
+  {% for x in categoria %}
+  <div class="card">
+    <img class="card-img-top" src="static/{{x.imagen}}" alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title"><a href="/actividad/categoria/?c={{x.id}}">{{x.titulo}}</a></h5>
+      <p class="card-text">{{x.descripcion}}</p>
+      <p class="card-text"><small class="text-muted"></small></p>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+</div>
+{% endblock %}

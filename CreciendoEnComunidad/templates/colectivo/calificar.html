@@ -1,0 +1,103 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Calificar participantes {% endblock %}
+
+{% load static %}
+
+
+{% block content %}
+<script>
+    var pathname = $(location).attr('search');
+    if (pathname == '?e=1') {
+        showSwal('unirse-actividad', '', '');
+        alert("la patada voladora");
+    }
+
+    function cargar_partipacion(value) {
+        if ($("#v").val() == "") {
+            $("#v").val(value);
+        } else {
+            cadena = $("#v").val();
+            if (cadena.indexOf("," + value) != -1) {
+                var nueva_cadena = cadena.replace("," + value, "");
+                $("#v").val(nueva_cadena);
+            } else if (cadena.indexOf(value + ",") != -1) {
+                var nueva_cadena = cadena.replace(value + ",", "");
+                $("#v").val(nueva_cadena);
+            } else if ((cadena.indexOf(",") == -1) && (cadena.indexOf(value) != -1)) {
+                $("#v").val("");
+            } else {
+                $("#v").val($("#v").val() + "," + value);
+            }
+
+        }
+    }
+
+</script>
+
+
+<div style="text-align: center;" class="m-5">
+    <h1>Culminar la actividad: Calificacion</h1>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <img src="{% for x in actividad %}{{x.imagen_principal}}{% endfor %}" width="100%" height="auto"
+                style="border-radius: 150px;" />
+        </div>
+        <div class="col" style="font-size: 18px;">
+            <p><b>Nombre de la actividad:</b> {% for x in actividad %} {{x.titulo}} {% endfor %}<br></p>
+            <p><b>Descripcion:</b> {% for x in actividad %} {{x.descripcion}} {% endfor %}<br></p>
+            <p><b>Fecha de inicio:</b> {% for x in actividad %} {{x.fecha_inicio}} {% endfor %}<br></p>
+            <p><b>Fecha final:</b> {% for x in actividad %} {{x.fecha_fin}} {% endfor %}<br></p>
+            <p><b>Valores desarrollados:</b> {% for x in valor %} {{x.id_valor.titulo}}, {% endfor %}</p>
+            <p><b>Colectivo a calificar:</b> {% for x in colectivo %} {{x.id_colectivo.titulo}} {% endfor %}<br></p>
+            <p><b>Integrantes del colectivo:</b><br><br>
+                <table class="table">
+                    <tr>
+                        <th>
+                            Integrante
+                        </th>
+                        <th>
+                            Usuario
+                        </th>
+                        <th class="text-center">
+                            Participó
+                        </th>
+                    </tr>
+                    {% for x in integrantes %}
+                    <tr>
+                        <td>
+                            <img src="{% static '/img/login/profile.png' %}" width="30px" height="auto" style="border-radius: 25px;" class="m-2"> {{x.id_usuario.first_name}} {{x.id_usuario.last_name}}
+                        </td>
+                        <td style="vertical-align: middle;">
+                            {{x.id_usuario.username}}
+                        </td>
+                        <td class="text-center" style="vertical-align: middle;">
+                            <input type="checkbox" value="{{x.id_usuario.id}}"
+                                onclick="cargar_partipacion(this.value);">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <br>
+                <form method="POST" action="/colectivo/calificar/">
+                    {% csrf_token %}
+                <input type="text" name="calificados" value="" id="v" style="display: none;">
+                <input type="text" name="actividad" value="{% for x in actividad %}{{x.id}}{% endfor %}" id="v"
+                    style="display: none;">
+                <div class="text-center"><input class="btn btn-success" name="guardar" type="submit"
+                        value="Gurdar calificaciones">
+                </div>
+                </form>
+
+
+                <br>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

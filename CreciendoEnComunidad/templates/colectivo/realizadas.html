@@ -1,0 +1,120 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Actiidades que he ayudado{% endblock %}
+
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+<script>
+    var pathname = $(location).attr('search');
+    if (pathname == '?e=1') {
+        showSwal('unirse-actividad', '', '');
+    }
+
+</script>
+
+<div id="contenido_mensaje" style="display: none;">
+    {% if colectivos %}
+    <form method="POST" action="/actividad/unirse/">
+        {% csrf_token %}
+        <h4>Elige el colectivo con el que ayudarás a esta actividad:</h4> <br /><br />
+        <input type="text" id="colectivo_actividad_id" value="" style="display: none;" name="actividad">
+        <select id="colectivo_actividad" class="form-control" name="colectivo">
+            {% for x in colectivos %}
+            <option value="{{x.id_colectivo.id}}">{{x.id_colectivo.titulo}}</option>
+            {% endfor %}
+            <option value="0">Ayudaré yo solo</option>
+        </select><br /><br />
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-success">Unirse a la actividad</button>
+        </div>
+    </form>
+    {% else %}
+    <h4>Debes de iniciar sesion para poder ayudar a esta actividad.</h4><br /><br />
+    <div style="text-align: center;">
+        <a href="/cuenta/login/" class="btn peach-gradient btn-primary">Iniciar sesion</a>
+    </div>
+    {% endif %}
+</div>
+
+<div style="text-align: center;" class="m-5">
+    <h1>Mira todo lo que has ayudado</h1>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="/actividad/listar/" role="tab"
+                    aria-controls="v-pills-home" aria-selected="true"
+                    onclick="javascript:window.location.href = '/actividad/listar/';"><img
+                        src="{% static 'img/menu/recomendaciones.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/actividad/listar/';">Recomendaciones</a>
+
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/listar/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/listar/';"><img
+                        src="{% static 'img/menu/colectivo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/listar/';">Colectivos</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/crear/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/crear/';"><img
+                        src="{% static 'img/menu/crearcolectivo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/crear/';">Crear colectivo</a>
+
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/actividad/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/actividad/';"><img
+                        src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/actividad/';">Actividad que ayudo</a>
+                <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/realizadas/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/colectivo/realizadas/';"><img
+                        src="{% static 'img/menu/realizado.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/colectivo/realizadas/';">Actividades realizadas</a>
+                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/colectivo/valores/"
+                        role="tab" aria-controls="v-pills-profile" aria-selected="false"
+                        onclick="javascript:window.location.href = '/colectivo/valores/';"><img
+                            src="{% static 'img/menu/valores.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/colectivo/valores/';">Valores desarrollados</a>
+            </div>
+        </div>
+        <div class="col">
+            {% if user.is_authenticated %}
+            {% if actividades %}
+            {% for x in actividades %}
+            <section>
+                <div class="card mt-3 mb-3">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{x.id_actividad.imagen_principal}}" style="height: 100%; width: 100%;">
+                        </div>
+                        <div class="col-md-8 px-3 p-3">
+                            <div class="card-block px-3">
+                                <h4 class="card-title"><a
+                                        href="/actividad/ver/?id={{x.id_actividad.id}}">{{x.id_actividad.titulo}}</a>
+                                </h4>
+                                <p class="card-text">{{x.id_actividad.descripcion}}</p>
+                                <button type="button" class="btn btn-success" value="{{x.id_actividad.id}}"
+                                    onclick="javascript:window.location.href ='/actividad/certificado/?c={{x.id_actividad.id}}'">Ver certificado</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+            {% endfor %}
+            {% else %}
+            <div class="text-center p-3"> <h1>:(</h1><br><br><h5>No has completado una realización de actividad... Hasta Hoy! Únete a cualquier actividad en Recomendaciones como voluntario o con tu colectivo </h5><br></div>
+            {% endif %}
+            {% else %}
+            
+            <div class="text-center"> Tienes que iniciar sesion para poder ver las actividades que has realizado <br><br><a href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

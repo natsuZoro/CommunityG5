@@ -1,0 +1,46 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Detalles de la actividad {% endblock %}
+
+{% load static %}
+{% block content %}
+
+<div class="container mb-5">
+    <h2 class="mb-5 mt-5">Actividad: {% for x in actividades %}{{x.titulo}}{% endfor %}</h2>
+    <div class="row">
+        <div class="col-4">
+            <img src="{% for x in actividades %}{{x.imagen_principal}}{% endfor %}" width="100%" height="auto"
+                style="border-radius: 150px;" />
+        </div>
+        <div class="col">
+            <p style="font-size: 22px;"><b>Descripción:</b> {% for x in actividades %}{{x.descripcion}}{% endfor %}</p>
+
+            <p style="font-size: 22px;"><img src="{% static 'img/icon/categoria.png' %}" width="40px" height="auto"
+                    class="mr-2" /><b>Categoria: </b>{% for x in actividades %}{{x.id_categoria.titulo}} {% endfor %}</p>
+            <p style="font-size: 22px;"><img src="{% static 'img/icon/valor.png' %}" width="40px" height="auto"
+                    class="mr-2" /><b>Valor: </b>{% for x in valores %}{{x.id_valor.titulo}}, {% endfor %}</p>
+            <p style="font-size: 22px;"><img src="{% static 'img/icon/ubicacion.png' %}" width="40px" height="auto"
+                    class="mr-2" /><b>Ubicacion: </b><br>{% for x in actividades %}{{x.id_distrito.nombre}}{% endfor %}
+                /
+                {% for x in actividades %}{{x.id_distrito.id_provincia.nombre}}{% endfor %} /
+                {% for x in actividades %}{{x.id_distrito.id_provincia.id_departamento.nombre}}{% endfor %}</p>
+            <p style="font-size: 20px;"><b>Dirección: </b>{% for x in actividades %}{{x.direccion}}{% endfor %}
+                <br><b>Referencia: </b>{% for x in actividades %}{{x.referencia}}{% endfor %}</p><br>
+
+                <!--
+                {% if pertenece %}
+                <button type="button" class="btn btn-primary" value="{{x.id}}"
+                onclick="mostrar_mensaje('culminar',this.value);">Actividad culminada</button>
+                <button type="button" class="btn btn-danger" value="{{x.id}}"
+                onclick="mostrar_mensaje('salir_actividad',this.value);">Salir de la actividad</button>
+
+                {% else %}
+                <button type="button" class="btn btn-success" >Unirse a la actividad</button>
+                <button type="button" class="btn btn-danger">Añadir a intereses</button>
+                {% endif %}
+                -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}

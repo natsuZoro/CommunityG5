@@ -1,0 +1,41 @@
+{% extends "cec_back.html" %}
+
+{% block title %} Entrar {% endblock %}
+{% block navbar%}
+{% endblock %}
+{% block content %}
+<div style="text-align: center;" class="m-5">
+	<h1>Ingrese sus credenciales</h1>
+</div>
+
+<div class="container" style="width: 600px;">
+	<form method="post">
+		{% csrf_token %}
+		<div class="row">
+			<div class="col">
+				<div class="form-group">
+					<label for="username">Nombre de usuario:</label>
+					<input class="form-control" type="text" name="username">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<div class="form-group">
+					<label for="username">Contraseña:</label>
+					<input class="form-control" type="password" name="password">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<div class="form-group text-center">
+					<a href="#" class="text-right" >Olvidé mi contraseña</a><br><br>
+					<input class="btn btn-primary text-center" type="submit" value="Ingresar">
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Crear comunidad {% endblock %}
+
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+
+<div style="text-align: center;" class="m-5">
+    <h1>Crea una comunidad</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="/comunidad/listar/" role="tab"
+                    aria-controls="v-pills-home" aria-selected="true" onclick="javascript:window.location.href = '/comunidad/listar/';"><img
+                        src="{% static 'img/menu/comunidad2.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/comunidad/listar/';">Comunidades</a>
+
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/actividad/crear/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/actividad/crear/';"><img
+                        src="{% static 'img/menu/actividades.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/actividad/crear/';">Crear actividad</a>
+                <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/crear/"
+                    role="tab" aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/comunidad/crear/';"><img
+                        src="{% static 'img/menu/crearcomunidad.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/comunidad/crear/';">Crear comunidad</a>
+
+                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/actividad/"
+                        role="tab" aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/comunidad/actividad/';"><img
+                            src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/comunidad/actividad/';">Mis actividades</a>
+            </div>
+        </div>
+        <div class="col">
+            {% if user.is_authenticated %}
+            
+            <form action="/comunidad/crear/" method="POST" id="crear_colectivo" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Titulo: </label>
+                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                                placeholder="Vecinos del rincon de Huaylas" name="titulo" maxlength="50" required>
+                            <small id="emailHelp" class="form-text text-muted">Máximo de 100 caracteres.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Escribe la descipción de la actividad: </label>
+                            <textarea type="text" name="descripcion" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp"
+                                placeholder="Por ejemplo: Somos una comunidad pequeña al este de Lima"
+                                maxlength="250" required></textarea>
+                            <small id="emailHelp" class="form-text text-muted">Recuerda ser conciso</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Escribe los usuarios de los integrantes separados por una
+                                coma:</label>
+                            <textarea type="text" name="integrantes" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" placeholder="zrojas,mquispe,smvelasquez, etc"
+                                maxlength="250" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Sube la foto sobre la comunidad y su descripción: </label>
+                            <input type="file" name="imagenes" class="form-control" required> <br><br>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">.</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                                placeholder="Aqui detalla cosas sobre la foto" name="foto_descripcion" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="text-align: center;">
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary">Crear comunidad</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-warning"
+                            onclick="document.getElementById('crear_comunidad').reset();">Limpiar el formulario</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-danger"
+                            onclick="javascript:window.location.href = '../';">Cancelar</button><br><br>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+            
+            <div class="text-center"> Tienes que iniciar sesion para poder crear una comunidad. <br><br><a href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

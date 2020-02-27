@@ -1,0 +1,34 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Detalles de la comunidad {% endblock %}
+
+{% load static %}
+{% block content %}
+<div class="container mb-5">
+    <h2 class="mb-5 mt-5">Comunidad: {% for x in comunidad %}{{x.titulo}}{% endfor %}</h2>
+    <div class="row">
+        <div class="col-4">
+            <img src="{% for x in comunidad %}{{x.imagen_principal}}{% endfor %}" width="100%" height="auto"
+                style="border-radius: 150px;" />
+        </div>
+        <div class="col">
+            <p style="font-size: 22px;"><b>Descripción:</b> {% for x in comunidad %}{{x.descripcion}}{% endfor %}</p>
+            <p style="font-size: 22px;"><b>integrantes:</b><br>
+            {% for x in integrantes %}
+            <img src="{% static '/img/login/profile.png' %}" width="50px" height="auto" style="border-radius: 25px;" class="m-2"> {{x.id_integrante.first_name}} {{x.id_integrante.last_name}} - Usuario: {{x.id_integrante.username}}<br>
+            {% endfor %}
+            </p>
+            {% if miembro %}
+            <button type="button" class="btn btn-danger" >Salir de la comunidad</button>
+            <button type="button" class="btn btn-success">Añadir más miembros</button>
+            {% else %}
+            <button type="button" class="btn btn-success" >Unirse a la comunidad</button>
+            <button type="button" class="btn btn-warning">Añadir a intereses</button>
+            {% endif %}
+            
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

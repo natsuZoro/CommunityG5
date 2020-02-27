@@ -1,0 +1,138 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Comunidades {% endblock %}
+
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+
+<div style="text-align: center;" class="m-5">
+    <h1>Únete ya a alguna comunidad</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="/comunidad/listar/" role="tab"
+                    aria-controls="v-pills-home" aria-selected="true" onclick="javascript:window.location.href = '/comunidad/listar/';"><img
+                        src="{% static 'img/menu/comunidad2.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/comunidad/listar/';">Comunidades</a>
+
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/actividad/crear/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/actividad/crear/';"><img
+                        src="{% static 'img/menu/actividades.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/actividad/crear/';">Crear actividad</a>
+                        
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/crear/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/comunidad/crear/';"><img
+                        src="{% static 'img/menu/crearcomunidad.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/comunidad/crear/';">Crear comunidad</a>
+
+                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/actividad/"
+                        role="tab" aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/comunidad/actividad/';"><img
+                            src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
+                            onclick="javascript:window.location.href = '/comunidad/actividad/';">Mis actividades</a>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row mb-3 tab-colectivo">
+                <div class="col text-center colectivo-activo" onclick="tab_change(id);" id="tab_title_1">
+                    Nuevas comunidades
+                </div>
+                <div class="col text-center colectivo" onclick="tab_change(id);" id="tab_title_2">
+                    Mis comunidades
+                </div>
+            </div>
+            <div class="row" id="tab_box_1" style="display: block;">
+                {% if user.is_authenticated %}
+                {% if nueva_comunidad %}
+                {% for x in nueva_comunidad %}
+                <section>
+                    <div class="card mt-3 mb-3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="{{x.imagen_principal}}" style="height: 100%; width: 100%;">
+                            </div>
+                            <div class="col-md-9 px-3 p-3">
+                                <div class="card-block px-3">
+                                    <h4 class="card-title"><a
+                                            href="/comunidad/ver/?id={{x.id}}">{{x.titulo}}</a></h4>
+                                    <p class="card-text">{{x.descripcion}}</p>
+                                    <p class="card-text text-muted"></p>
+                                    <button type="button" class="btn btn-success">Unirse a la comunidad</button>
+                                    <button type="button" class="btn btn-warning">Añadir a intereses</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+                {% endfor %}
+                {% endif %}
+                {% else %}
+                {% if invitado_comunidad %}
+                {% for x in invitado_comunidad %}
+                <section>
+                    <div class="card mt-3 mb-3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="{{x.imagen_principal}}" style="height: 100%;  width: 100%;">
+                            </div>
+                            <div class="col-md-9 px-3 p-3">
+                                <div class="card-block px-3">
+                                    <h4 class="card-title"><a
+                                            href="/comunidad/ver/?id={{x.id}}">{{x.titulo}}</a></h4>
+                                    <p class="card-text">{{x.descripcion}}</p>
+                                    <p class="card-text text-muted"></p>
+                                    <button type="button" class="btn btn-success">Unirse a la comunidad</button>
+                                    <button type="button" class="btn btn-warning">Añadir a intereses</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+                {% endfor %}
+                {% endif %}                
+                {% endif %}
+            </div>
+            <div class="row" id="tab_box_2" style="display: none;">
+                {% if user.is_authenticated %}
+                    {% if comunidad %}
+                    {% for x in comunidad %}
+                    <section>
+                        <div class="card mt-3 mb-3">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <img src="{{x.id_comunidad.imagen_principal}}" style="height: 100%; width: 100%;">
+                                </div>
+                                <div class="col-md-9 px-3 p-3">
+                                    <div class="card-block px-3">
+                                        <h4 class="card-title"><a
+                                                href="/comunidad/ver/?id={{x.id_comunidad.id}}">{{x.id_comunidad.titulo}}</a>
+                                        </h4>
+                                        <p class="card-text">{{x.id_comunidad.descripcion}}</p>
+                                        <p class="card-text text-muted"></p>
+                                        <button type="button" class="btn btn-danger">Salir de la comunidad</button>
+                                        <button type="button" class="btn btn-success">Añadir más miembros</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center p-3"> <h1>:(</h1><br><br><h5>No estás todavía en ninguna comunidad. Puedes unirte en cualquiera de las Nuevas comunidades o crear una nueva</h5><br></div>
+                    {% endif %}
+                {% else %}
+                <div class="text-center"> Tienes que iniciar sesion para ver tus comunidades: <br><br><a href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

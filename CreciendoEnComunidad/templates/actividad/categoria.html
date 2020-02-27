@@ -1,0 +1,66 @@
+{% extends "../cec_back.html" %}
+
+{% block title %} Búsqueda de palabra {% endblock %}
+
+{% block content %}
+<div id="contenido_mensaje" style="display: none;">
+  {% if user.is_authenticated %}
+  <form method="POST" action="/actividad/unirse/">
+      {% csrf_token %}
+      <h4>Elige el colectivo con el que ayudarás a esta actividad:</h4> <br /><br />
+      <input type="text" id="colectivo_actividad_id" value="" style="display: none;" name="actividad">
+      <select id="colectivo_actividad" class="form-control" name="colectivo">
+          {% for x in colectivos %}
+          <option value="{{x.id_colectivo.id}}">{{x.id_colectivo.titulo}}</option>
+          {% endfor %}
+          <option value="0">Ayudaré yo solo</option>
+      </select><br /><br />
+      <div style="text-align: center;">
+          <button type="submit" class="btn btn-success">Unirse a la actividad</button>
+      </div>
+  </form>
+  {% else %}
+  <h4>Debes de iniciar sesion para poder ayudar a esta actividad.</h4><br /><br />
+  <div style="text-align: center;">
+      <a href="/cuenta/login/" class="btn peach-gradient btn-primary">Iniciar sesion</a>
+  </div>
+  {% endif %}
+</div>
+
+<div style="text-align: center;" class="m-5">
+  <h1>Categoria: {% for x in categoria %}{{x.titulo}}{% endfor %}</h1>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+
+      {% if actividades %}
+      {% for actividad in actividades %}
+          <section>
+              <div class="card mt-3 mb-3">
+                  <div class="row">
+                      <div class="col-md-3">
+                          <img src="{{actividad.imagen_principal}}"
+                              style="height: 100%; width: 100%;">
+                      </div>
+                      <div class="col-md-9 px-3 p-3">
+                          <div class="card-block px-3">
+                              <h4 class="card-title"><a href="/actividad/ver/?id={{actividad.id}}">{{actividad.titulo}}</a></h4>
+                              <p class="card-text">{{actividad.descripcion}}</p>
+                              <p class="card-text text-muted"><small>Programado para el: {{actividad.fecha_inicio.day}}/{{actividad.fecha_inicio.month}}/{{actividad.fecha_inicio.year}}</small></p>
+                              <button type="button" class="btn btn-success" value="{{actividad.id}}"
+                              onclick="mostrar_mensaje('unirse',this.value);">Unirse a la actividad</button>
+                              <button type="button" class="btn btn-warning">Añadir a intereses</button>
+                          </div>
+                      </div>
+
+                  </div>
+              </div>
+          </section>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
