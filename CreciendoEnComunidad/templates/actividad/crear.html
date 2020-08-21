@@ -11,6 +11,15 @@
     if (pathname == '?e=1') {
         showSwal('publish-activitie','','');
     }
+    if (pathname == '?e=2') {
+        showSwal('error-valor-publish-activitie','','');
+    }
+    if (pathname == '?e=3') {
+        showSwal('error-imagen-publish-activitie','','');
+    }
+    if (pathname == '?e=4') {
+        showSwal('error-fecha-publish-activitie','','');
+    }
 
     function cargar_valor(value){
         if($("#v").val() == ""){
@@ -72,7 +81,7 @@
                                 <label for="exampleInputEmail1">Titulo: </label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     placeholder="Por ejemplo: Limpieza de 2 km del Rio Rimac" name="titulo" maxlength="50" required>
-                                <small id="emailHelp" class="form-text text-muted">Máximo de 100 caracteres.</small>
+                                <small id="emailHelp" class="form-text text-muted">Máximo de 50 caracteres.</small>
                             </div>
                         </div>
                     </div>
@@ -84,7 +93,7 @@
                                     aria-describedby="emailHelp"
                                     placeholder="Por ejemplo: El rio chillon tiene 5 años acumulando basura diaria..."
                                     maxlength="250" required></textarea>
-                                <small id="emailHelp" class="form-text text-muted">Recuerda ser conciso</small>
+                                <small id="emailHelp" class="form-text text-muted">Recuerda ser conciso. Máximo 250 caracteres.</small>
                             </div>
                         </div>
                     </div>
@@ -160,9 +169,10 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Escribe la dirección: </label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                    placeholder="Por ejemplo: Av, Jr, Calle con Nro, Mz y Lote" name="direccion" required><br>
+                                    placeholder="Por ejemplo: Av, Jr, Calle con Nro, Mz y Lote" name="direccion" maxlength="100" required ><br>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                    placeholder="Escribe aquí las referencias" name="referencia" required>
+                                    placeholder="Escribe aquí las referencias" name="referencia" maxlength="150" required>
+
                             </div>
                         </div>
                     </div>
@@ -177,7 +187,7 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">.</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                    placeholder="Aqui detalla cosas sobre la foto" name="foto_descripcion" required>
+                                    placeholder="Aqui detalla cosas sobre la foto" name="foto_descripcion" maxlength="25" required>
                             </div>
                         </div>
                     </div>

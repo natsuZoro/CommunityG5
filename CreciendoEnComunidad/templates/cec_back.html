@@ -75,7 +75,46 @@
                         }
                     })
 
-                } else if (type === 'create-comunity') {
+                } else if (type === 'error-valor-publish-activitie') {
+                    swal({
+                        title: 'Hubo un error!',
+                        text: 'Debe seleccionar entre 1 a 4 valores',
+                        type: 'warning',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-danger"
+                        }
+                    })
+
+                } else if (type === 'error-imagen-publish-activitie') {
+                    swal({
+                        title: 'Hubo un error!',
+                        text: 'El formato de imagen debe de ser jpg o png',
+                        type: 'warning',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-danger"
+                        }
+                    })
+
+                }else if (type === 'error-fecha-publish-activitie') {
+                    swal({
+                        title: 'Hubo un error!',
+                        text: 'La fecha de fin debe ser luego de la fecha de incio y al menos desde mañana',
+                        type: 'warning',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-danger"
+                        }
+                    })
+
+                }else if (type === 'create-comunity') {
                     swal({
                         title: 'Felicidades!',
                         text: 'Se ha creado la comunidad',
@@ -85,6 +124,19 @@
                             value: true,
                             visible: true,
                             className: "btn btn-primary"
+                        }
+                    })
+
+                } else if (type === 'error-create-comunity') {
+                    swal({
+                        title: 'Hubo un error!',
+                        text: 'Escriba correctamente los usuarios integrantes',
+                        type: 'warning',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-danger"
                         }
                     })
 
@@ -101,7 +153,20 @@
                         }
                     })
 
-                } else if (type === 'unirse-actividad') {
+                } else if (type === 'error-create-colectivo') {
+                    swal({
+                        title: 'Hubo un error!',
+                        text: 'Escriba correctamente los usuarios integrantes',
+                        type: 'warning',
+                        button: {
+                            text: "Seguir",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-danger"
+                        }
+                    })
+
+                }else if (type === 'unirse-actividad') {
                     swal({
                         title: 'Felicidades!',
                         text: 'Se ha unido para ayudar a la actividad',

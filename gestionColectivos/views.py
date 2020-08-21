@@ -12,6 +12,7 @@ from django.db.models import Q, Count, Max, Aggregate
 from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -108,54 +109,78 @@ def crear_colectivo(request):
         colectivo_titulo = request.POST['titulo']
         colectivo_descripcion = request.POST['descripcion']
         colectivo_imagen = request.FILES['imagenes']
-        colectivo_foto_descripcion = request.POST['foto_descripcion']
+        formato = ''
+        for w in colectivo_imagen.name.split('.'):
+            formato = str(w)
+            print(w)
 
-        #guardamos la imagen en el servidor
-        fs = FileSystemStorage()
-        nombre_imagen = get_random_string(length=32,allowed_chars=datetime.datetime.now().strftime("%d%b%Y%H%M%S%f"))+colectivo_imagen.name
-        guardar_imagen = fs.save(nombre_imagen, colectivo_imagen)
+        if formato == 'jpg' or formato == 'png':
 
-        #separamos los integrantes
-        colectivo_integrantes = request.POST['integrantes']
-        colectivo_integrantes_split = colectivo_integrantes.split(',')
+            colectivo_foto_descripcion = request.POST['foto_descripcion']
 
-        #elegimos al lider
-        colectivo_lider_fundador = request.POST['lider']
-        if colectivo_lider_fundador == "0":
-            tempo = colectivo_integrantes_split[0]
-            integrante = User.objects.get(username=tempo)
-            lider = integrante.id
-        elif colectivo_lider_fundador == "1":
-            lider = current_user.id
+            #guardamos la imagen en el servidor
+            fs = FileSystemStorage()
+            nombre_imagen = get_random_string(length=32,allowed_chars=datetime.datetime.now().strftime("%d%b%Y%H%M%S%f"))+colectivo_imagen.name
+            guardar_imagen = fs.save(nombre_imagen, colectivo_imagen)
 
-        #guardamos los datos recogidos en el modelo Colectivo
-        colectivo_info = Colectivo(
-                titulo=colectivo_titulo, 
-                descripcion=colectivo_descripcion,
-                imagen_principal=fs.url(guardar_imagen),
-                imagen_descripcion=colectivo_foto_descripcion,
-                fundador_id=current_user.id,
-                lider_id=lider)
-        colectivo_info.save()
+            #separamos los integrantes
+            colectivo_integrantes = request.POST['integrantes']
+            for j in range(len(colectivo_integrantes)):
+                colectivo_integrantes = colectivo_integrantes.replace(' ','').replace(',,',',').replace('\n', ' ').replace('\r', '')
+            colectivo_integrantes_split = colectivo_integrantes.split(',')
 
-        #tomamos el id_colectivo nuevo generado y guardamos sus integrantes
-        for x in colectivo_integrantes_split:
-            integrante = User.objects.get(username=x)
-            relacioncolectivointegrante_info = RelacionColectivoUsuario(
-                id_colectivo_id = colectivo_info.id,
-                id_integrante_id = integrante.id
-            )
-            relacioncolectivointegrante_info.save()
+            validado = 1
+            for x in colectivo_integrantes_split:
+                try:
+                    valor = User.objects.get(username=x)
+                except ObjectDoesNotExist:
+                    valor = None
+                if valor is None:
+                    validado = 0
 
-        #añadimos por defecto como integrante al creador del colectivo 
-        relacioncolectivointegrante_info = RelacionColectivoUsuario(
-            id_colectivo_id = colectivo_info.id,
-            id_integrante_id = current_user.id
-        )
-        relacioncolectivointegrante_info.save()
-        
-        #redireccionamos a la misma pagina con un mensaje de OK
-        return redirect('/colectivo/crear/?e=1')
+            if validado == 1:
+                #elegimos al lider
+                colectivo_lider_fundador = request.POST['lider']
+                if colectivo_lider_fundador == "0":
+                    tempo = colectivo_integrantes_split[0]
+                    integrante = User.objects.get(username=tempo)
+                    lider = integrante.id
+                elif colectivo_lider_fundador == "1":
+                    lider = current_user.id
+
+                #guardamos los datos recogidos en el modelo Colectivo
+                colectivo_info = Colectivo(
+                        titulo=colectivo_titulo, 
+                        descripcion=colectivo_descripcion,
+                        imagen_principal=fs.url(guardar_imagen),
+                        imagen_descripcion=colectivo_foto_descripcion,
+                        fundador_id=current_user.id,
+                        lider_id=lider)
+                colectivo_info.save()
+
+                #tomamos el id_colectivo nuevo generado y guardamos sus integrantes
+                for x in colectivo_integrantes_split:
+                    integrante = User.objects.get(username=x)
+                    if x != request.user:
+                        relacioncolectivointegrante_info = RelacionColectivoUsuario(
+                            id_colectivo_id = colectivo_info.id,
+                            id_integrante_id = integrante.id
+                        )
+                        relacioncolectivointegrante_info.save()
+
+                #añadimos por defecto como integrante al creador del colectivo 
+                relacioncolectivointegrante_info = RelacionColectivoUsuario(
+                    id_colectivo_id = colectivo_info.id,
+                    id_integrante_id = current_user.id
+                )
+                relacioncolectivointegrante_info.save()
+                
+                #redireccionamos a la misma pagina con un mensaje de OK
+                return redirect('/colectivo/crear/?e=1')
+            else:
+                return redirect('/colectivo/crear/?e=2')
+        else:
+            return redirect('/colectivo/crear/?e=3')
 
     return render(request, "colectivo/crear.html",)
 

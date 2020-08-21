@@ -11,7 +11,7 @@ from django.db.models import Q, Count, Max, Aggregate
 from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from django.contrib import auth
-
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 def listar_comunidad(request):
@@ -39,36 +39,64 @@ def crear_comunidad(request):
         comunidad_titulo = request.POST['titulo']
         comunidad_descripcion = request.POST['descripcion']
         comunidad_imagen = request.FILES['imagenes']
-        comunidad_foto_descripcion = request.POST['foto_descripcion']
-        fs = FileSystemStorage()
-        nombre_imagen = get_random_string(length=32,allowed_chars=datetime.datetime.now().strftime("%d%b%Y%H%M%S%f"))+comunidad_imagen.name
-        guardar_imagen = fs.save(nombre_imagen, comunidad_imagen)
 
-        comunidad_integrantes = request.POST['integrantes']
-        comunidad_integrantes_split = comunidad_integrantes.split(',')
+        formato = ''
+        for w in comunidad_imagen.name.split('.'):
+            formato = str(w)
+            print(w)
 
-        comunidad_info = Comunidad(
-                titulo=comunidad_titulo, 
-                descripcion=comunidad_descripcion,
-                imagen_principal=fs.url(guardar_imagen),
-                imagen_descripcion=comunidad_foto_descripcion,
-                fundador_id=current_user.id)
-        comunidad_info.save()
+        if formato == 'jpg' or formato == 'png':
 
-        for x in comunidad_integrantes_split:
-            integrante = User.objects.get(username=x)
-            relacioncomunidadintegrante_info = RelacionComunidadUsuario(
-                id_comunidad_id = comunidad_info.id,
-                id_integrante_id = integrante.id
-            )
-            relacioncomunidadintegrante_info.save()
-        relacioncomunidadintegrante_info = RelacionComunidadUsuario(
-            id_comunidad_id = comunidad_info.id,
-            id_integrante_id = current_user.id
-        )
-        relacioncomunidadintegrante_info.save()            
-        return redirect('/comunidad/crear/?e=1')
+            comunidad_foto_descripcion = request.POST['foto_descripcion']
+            fs = FileSystemStorage()
+            nombre_imagen = get_random_string(length=32,allowed_chars=datetime.datetime.now().strftime("%d%b%Y%H%M%S%f"))+comunidad_imagen.name
+            guardar_imagen = fs.save(nombre_imagen, comunidad_imagen)
 
+            comunidad_integrantes = request.POST['integrantes']
+            for j in range(len(comunidad_integrantes)):
+                comunidad_integrantes = comunidad_integrantes.replace(' ','').replace(',,',',').replace('\n', ' ').replace('\r', '')
+
+            comunidad_integrantes_split = comunidad_integrantes.replace(' ','').split(',')
+
+            validado = 1
+            for x in comunidad_integrantes_split:
+                try:
+                    valor = User.objects.get(username=x)
+                except ObjectDoesNotExist:
+                    valor = None
+                if valor is None:
+                    validado = 0
+
+            if validado == 1:        
+                comunidad_info = Comunidad(
+                        titulo=comunidad_titulo, 
+                        descripcion=comunidad_descripcion,
+                        imagen_principal=fs.url(guardar_imagen),
+                        imagen_descripcion=comunidad_foto_descripcion,
+                        fundador_id=current_user.id)
+                comunidad_info.save()
+
+                for x in comunidad_integrantes_split:
+                    integrante = User.objects.get(username=x)
+                    if x != request.user:
+                        relacioncomunidadintegrante_info = RelacionComunidadUsuario(
+                            id_comunidad_id = comunidad_info.id,
+                            id_integrante_id = integrante.id
+                        )
+                        relacioncomunidadintegrante_info.save()
+                    
+
+                relacioncomunidadintegrante_info = RelacionComunidadUsuario(
+                    id_comunidad_id = comunidad_info.id,
+                    id_integrante_id = current_user.id
+                )
+                relacioncomunidadintegrante_info.save()            
+                return redirect('/comunidad/crear/?e=1')
+            
+            else:
+                return redirect('/comunidad/crear/?e=2')
+        else:
+            return redirect('/comunidad/crear/?e=3')
 
     return render(request, "comunidad/crear.html",)
 

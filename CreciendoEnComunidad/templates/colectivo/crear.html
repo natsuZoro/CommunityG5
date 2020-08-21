@@ -11,6 +11,12 @@
     if (pathname == '?e=1') {
         showSwal('create-colectivo','','');
     }
+    if (pathname == '?e=2') {
+        showSwal('error-create-colectivo','','');
+    }
+    if (pathname == '?e=3') {
+        showSwal('error-imagen-publish-activitie','','');
+    }
 
     function cargar_lider(){
         if($("#l").val()=="0"){
@@ -71,7 +77,7 @@
                             <label for="exampleInputEmail1">Titulo: </label>
                             <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                 placeholder="Socios de la biodiversidad" name="titulo" maxlength="50" required>
-                            <small id="emailHelp" class="form-text text-muted">Máximo de 100 caracteres.</small>
+                            <small id="emailHelp" class="form-text text-muted">Máximo de 50 caracteres.</small>
                         </div>
                     </div>
                 </div>
@@ -83,7 +89,7 @@
                                 aria-describedby="emailHelp"
                                 placeholder="Por ejemplo: Somos un grupo en crecimiento amantes de la biodiversidad"
                                 maxlength="250" required></textarea>
-                            <small id="emailHelp" class="form-text text-muted">Recuerda ser conciso</small>
+                            <small id="emailHelp" class="form-text text-muted">Recuerda ser conciso. Maximo 250 caracteres.</small>
                         </div>
                     </div>
                 </div>
@@ -111,7 +117,7 @@
                         <div class="form-group">
                             <label for="exampleInputEmail1">.</label>
                             <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                placeholder="Aqui detalla cosas sobre la foto" name="foto_descripcion" required>
+                                placeholder="Aqui detalla cosas sobre la foto" name="foto_descripcion" maxlength="25" required>
                         </div>
                     </div>
                 </div>

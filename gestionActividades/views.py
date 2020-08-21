@@ -12,6 +12,7 @@ from django.db.models import Q, Count, Max, Aggregate
 from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from django.contrib import auth
+from datetime import datetime
 
 
 # Create your views here.
@@ -131,25 +132,28 @@ def listar_actividad(request):
         filtro2 = Actividad.objects.filter(id_comunidad_id__in=tempo1.values_list('id_comunidad_id',flat=True))
         filtro3 = Actividad.objects.filter(id_usuario_id=current_user.id)
 
-        if existe_preferencias and existe_preferencias_valor:
-            print ('Usuario con preferencia')
+        #if existe_preferencias and existe_preferencias_valor:
+        #    print ('Usuario con preferencia')
             #Agrupamos por lo más visitados, ordenamos de mayor a menor el conteo y solo tomamos el primer lugar
-            preferencia_distrito = Preferencias.objects.filter(id_usuario=current_user.id).values('id_distrito_id').annotate(dcount=Count('id_distrito_id')).order_by('-dcount')
-            preferencia_valor = Preferencias_valor.objects.filter(id_usuario=current_user.id).values('id_valor_id').annotate(dcount=Count('id_valor_id')).order_by('dcount')
-            preferencia_categoria = Preferencias.objects.filter(id_usuario=current_user.id).values('id_categoria_id').annotate(dcount=Count('id_categoria_id')).order_by('-dcount')
+        #    preferencia_distrito = Preferencias.objects.filter(id_usuario=current_user.id).values('id_distrito_id').annotate(dcount=Count('id_distrito_id')).order_by('-dcount')
+        #    preferencia_valor = Preferencias_valor.objects.filter(id_usuario=current_user.id).values('id_valor_id').annotate(dcount=Count('id_valor_id')).order_by('dcount')
+        #    preferencia_categoria = Preferencias.objects.filter(id_usuario=current_user.id).values('id_categoria_id').annotate(dcount=Count('id_categoria_id')).order_by('-dcount')
         
             #obtenemos el mas votado del resultado json y hacemos combinaciones
-            actividad = RelacionActividadValor.objects.distinct('id_actividad_id').filter(Q(id_actividad_id__fecha_fin__gte=datetime.datetime.now()) & (Q(id_actividad_id__id_distrito_id=preferencia_distrito[0].get('id_distrito_id')) | Q(id_actividad_id__id_categoria_id=preferencia_categoria[0].get('id_categoria_id')) | Q(id_valor_id=preferencia_valor[0].get('id_valor_id')) )).exclude(id_actividad_id__in=actividades.values_list('id',flat=True)).exclude(Q(id__in=filtro1.values_list('id_actividad_id',flat=True)) | Q(id__in=filtro2.values_list('id',flat=True)) | Q(id__in=filtro3.values_list('id',flat=True)))
-        else:
-            print ('Usuario sin preferencia')
-            actividad = RelacionActividadValor.objects.filter(id_actividad_id__fecha_fin__gte=datetime.datetime.now()).distinct('id_actividad_id').order_by('-id_actividad_id').exclude(id_actividad_id__in=actividades.values_list('id',flat=True)).exclude(Q(id__in=filtro1.values_list('id_actividad_id',flat=True)) | Q(id__in=filtro2.values_list('id',flat=True)) | Q(id__in=filtro3.values_list('id',flat=True)))
-    
+        #    actividad = RelacionActividadValor.objects.distinct('id_actividad_id').filter(Q(id_actividad_id__fecha_fin__gte=datetime.now()) & (Q(id_actividad_id__id_distrito_id=preferencia_distrito[0].get('id_distrito_id')) | Q(id_actividad_id__id_categoria_id=preferencia_categoria[0].get('id_categoria_id')) | Q(id_valor_id=preferencia_valor[0].get('id_valor_id')) )).exclude(id_actividad_id__in=actividades.values_list('id',flat=True)).exclude(Q(id__in=filtro1.values_list('id_actividad_id',flat=True)) | Q(id__in=filtro2.values_list('id',flat=True)) | Q(id__in=filtro3.values_list('id',flat=True)))
+        #else:
+        #    print ('Usuario sin preferencia')
+        actividad = RelacionActividadValor.objects.filter(id_actividad_id__fecha_fin__gte=datetime.now()).distinct('id_actividad_id').order_by('-id_actividad_id').exclude(id_actividad_id__in=actividades.values_list('id',flat=True)).exclude(Q(id__in=filtro1.values_list('id_actividad_id',flat=True)) | Q(id__in=filtro2.values_list('id',flat=True)) | Q(id__in=filtro3.values_list('id',flat=True)))
+
+        #temporal
+        actividad = RelacionActividadValor.objects.filter(id_actividad_id__fecha_fin__gte=datetime.now()).distinct('id_actividad_id').order_by('-id_actividad_id')
+
         #buscamos los colectivos en el que se encuentra el usuario
         colectivos = RelacionColectivoUsuario.objects.filter(id_integrante_id=current_user.id)
     else:
         print ('Usuario de visita')
         #obtenemos solo filtramos actuales y en orden mas reciente
-        actividad = RelacionActividadValor.objects.filter(id_actividad_id__fecha_fin__gte=datetime.datetime.now()).distinct('id_actividad_id').order_by('-id_actividad_id')
+        actividad = RelacionActividadValor.objects.filter(id_actividad_id__fecha_fin__gte=datetime.now()).distinct('id_actividad_id').order_by('-id_actividad_id')
         colectivos = None
     #Condicion: la fecha no sea pasada && (valor = valorMODA || categoria = categoriaMODA || distrito = distritoMODA)
     contexto = {'actividades':actividad,'colectivos':colectivos}
@@ -171,6 +175,8 @@ def categoria(request):
         filtro2 = Actividad.objects.filter(id_comunidad_id__in=tempo1.values_list('id_comunidad_id',flat=True))
         filtro3 = Actividad.objects.filter(id_usuario_id=current_user.id)
         actividad = Actividad.objects.filter(id_categoria_id=id_cat).exclude(Q(id__in=filtro1.values_list('id_actividad_id',flat=True)) | Q(id__in=filtro2.values_list('id',flat=True)) | Q(id__in=filtro3.values_list('id',flat=True)))
+
+        actividad = Actividad.objects.filter(id_categoria_id=id_cat)
 
     else:
         actividad = Actividad.objects.filter(id_categoria_id=id_cat)
@@ -247,44 +253,73 @@ def crear_actividad(request):
         actividad_valor = request.POST['valores']
         actividad_valor_split = actividad_valor.split(',')
 
-        actividad_imagen = request.FILES['imagenes']
-        actividad_foto_descripcion = request.POST['foto_descripcion']
+        valores = 0
+        for j in actividad_valor_split:
+            valores = valores + 1
 
-        fs = FileSystemStorage()
-        nombre_imagen = get_random_string(length=32,allowed_chars=datetime.datetime.now().strftime("%d%b%Y%H%M%S%f"))+actividad_imagen.name
-        guardar_imagen = fs.save(nombre_imagen, actividad_imagen)
+        print(valores)
+        _tempo = '##'+actividad_valor+'##'
+        print(_tempo)
 
-        #validamos si pertenece a comunidad o a un usuario en particular
-        if int(actividad_comunidad) == 0:
-            id_comunidad = None
-            id_usuario = request.user.id
+        fecha_1 = datetime.strptime(actividad_fecha_inicio, '%Y-%m-%d')
+        fecha_2 = datetime.strptime(actividad_fecha_fin, '%Y-%m-%d')
+        
+        if fecha_1 > fecha_2: 
+            return redirect('/actividad/crear/?e=4')
+        elif fecha_1 < datetime.now():
+            return redirect('/actividad/crear/?e=4')
         else:
-            id_comunidad = int(actividad_comunidad)
-            id_usuario = None
+            if valores <= 4 and valores > 0 and str(actividad_valor) != '':
+                actividad_imagen = request.FILES['imagenes']
+                actividad_foto_descripcion = request.POST['foto_descripcion']
 
-        actividad_info = Actividad(
-            titulo=actividad_titulo, 
-            descripcion=actividad_descripcion, 
-            fecha_inicio=actividad_fecha_inicio, 
-            fecha_fin=actividad_fecha_fin, 
-            id_distrito_id=actividad_distrito, 
-            id_categoria_id=actividad_categoria, 
-            direccion=actividad_direccion, 
-            referencia=actividad_referencia,
-            imagen_principal=fs.url(guardar_imagen),
-            imagen_descripcion=actividad_foto_descripcion,
-            id_comunidad_id=id_comunidad,
-            id_usuario_id=id_usuario,
-        )
-        actividad_info.save()
+                formato = ''
+                for w in actividad_imagen.name.split('.'):
+                    formato = str(w)
+                    print(w)
 
-        for x in actividad_valor_split:
-            relacionActividadValor_info = RelacionActividadValor(
-                id_actividad_id = actividad_info.id,
-                id_valor_id = int(x),
-            )
-            relacionActividadValor_info.save()
-        return redirect('/actividad/crear/?e=1')
+                if formato == 'jpg' or formato == 'png':
+
+                    fs = FileSystemStorage()
+                    nombre_imagen = get_random_string(length=32,allowed_chars=datetime.now().strftime("%d%b%Y%H%M%S%f"))+actividad_imagen.name
+                    guardar_imagen = fs.save(nombre_imagen, actividad_imagen)
+
+                    #validamos si pertenece a comunidad o a un usuario en particular
+                    if int(actividad_comunidad) == 0:
+                        id_comunidad = None
+                        id_usuario = request.user.id
+                    else:
+                        id_comunidad = int(actividad_comunidad)
+                        id_usuario = None
+
+                    actividad_info = Actividad(
+                        titulo=actividad_titulo, 
+                        descripcion=actividad_descripcion, 
+                        fecha_inicio=actividad_fecha_inicio, 
+                        fecha_fin=actividad_fecha_fin, 
+                        id_distrito_id=actividad_distrito, 
+                        id_categoria_id=actividad_categoria, 
+                        direccion=actividad_direccion, 
+                        referencia=actividad_referencia,
+                        imagen_principal=fs.url(guardar_imagen),
+                        imagen_descripcion=actividad_foto_descripcion,
+                        id_comunidad_id=id_comunidad,
+                        id_usuario_id=id_usuario,
+                    )
+                    actividad_info.save()
+
+                    for x in actividad_valor_split:
+                        relacionActividadValor_info = RelacionActividadValor(
+                            id_actividad_id = actividad_info.id,
+                            id_valor_id = int(x),
+                        )
+                        relacionActividadValor_info.save()
+                    return redirect('/actividad/crear/?e=1')
+                else:
+                    return redirect('/actividad/crear/?e=3')
+            else:
+                return redirect('/actividad/crear/?e=2')
+
 
     current_user = request.user
     comunidad = RelacionComunidadUsuario.objects.filter(id_integrante_id=current_user.id)
