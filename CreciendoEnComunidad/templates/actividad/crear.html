@@ -9,36 +9,73 @@
 <script>
     var pathname = $(location).attr('search');
     if (pathname == '?e=1') {
-        showSwal('publish-activitie','','');
+        showSwal('publish-activitie', '', '');
     }
     if (pathname == '?e=2') {
-        showSwal('error-valor-publish-activitie','','');
+        showSwal('error-valor-publish-activitie', '', '');
     }
     if (pathname == '?e=3') {
-        showSwal('error-imagen-publish-activitie','','');
+        showSwal('error-imagen-publish-activitie', '', '');
     }
     if (pathname == '?e=4') {
-        showSwal('error-fecha-publish-activitie','','');
+        showSwal('error-fecha-publish-activitie', '', '');
     }
 
-    function cargar_valor(value){
-        if($("#v").val() == ""){
+    function cargar_valor(value) {
+        if ($("#v").val() == "") {
             $("#v").val(value);
-        }else{
+        } else {
             cadena = $("#v").val();
-            if (cadena.indexOf(","+value) != -1){
-                var nueva_cadena = cadena.replace(","+value,"");
+            if (cadena.indexOf("," + value) != -1) {
+                var nueva_cadena = cadena.replace("," + value, "");
                 $("#v").val(nueva_cadena);
-            } else if (cadena.indexOf(value+",") != -1){
-                var nueva_cadena = cadena.replace(value+",","");
+            } else if (cadena.indexOf(value + ",") != -1) {
+                var nueva_cadena = cadena.replace(value + ",", "");
                 $("#v").val(nueva_cadena);
-            } else if ((cadena.indexOf(",") == -1) && (cadena.indexOf(value) != -1)){
+            } else if ((cadena.indexOf(",") == -1) && (cadena.indexOf(value) != -1)) {
                 $("#v").val("");
-            }else{
-                $("#v").val($("#v").val()+","+value);
+            } else {
+                $("#v").val($("#v").val() + "," + value);
             }
-            
+
         }
+    }
+
+
+
+    
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" ></script>
+<script>
+    function cambiar_provincia(){
+        $.ajax({
+            url: '../../cambiarProv/',
+            type: 'get',
+            data: {
+                codigo_departamento: $("#select_departamento").val()
+            },
+            success: function(response){
+                //alert(response.seconds)
+                $("#select_provincia").html(response)
+                $("#select_distrito").html("")
+            }
+        })
+
+    }
+
+    function cambiar_distrito(){
+        $.ajax({
+            url: '../../cambiarDist/',
+            type: 'get',
+            data: {
+                codigo_provincia: $("#select_provincia").val()
+            },
+            success: function(response){
+                //alert(response.seconds)
+                $("#select_distrito").html(response)
+            }
+        })
+
     }
 </script>
 
@@ -51,23 +88,27 @@
         <div class="col-4">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="/comunidad/listar/" role="tab"
-                    aria-controls="v-pills-home" aria-selected="true" onclick="javascript:window.location.href = '/comunidad/listar/';"><img
+                    aria-controls="v-pills-home" aria-selected="true"
+                    onclick="javascript:window.location.href = '/comunidad/listar/';"><img
                         src="{% static 'img/menu/comunidad2.png' %}" width="25px" class="mr-2"
                         onclick="javascript:window.location.href = '/comunidad/listar/';">Comunidades</a>
 
-                <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="/actividad/crear/" role="tab"
-                    aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/actividad/crear/';"><img
+                <a class="nav-link active" id="v-pills-profile-tab" data-toggle="pill" href="/actividad/crear/"
+                    role="tab" aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/actividad/crear/';"><img
                         src="{% static 'img/menu/actividades.png' %}" width="25px" class="mr-2"
                         onclick="javascript:window.location.href = '/actividad/crear/';">Crear actividad</a>
                 <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/crear/" role="tab"
-                    aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/comunidad/crear/';"><img
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/comunidad/crear/';"><img
                         src="{% static 'img/menu/crearcomunidad.png' %}" width="25px" class="mr-2"
                         onclick="javascript:window.location.href = '/comunidad/crear/';">Crear comunidad</a>
 
-                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/actividad/"
-                        role="tab" aria-controls="v-pills-profile" aria-selected="false" onclick="javascript:window.location.href = '/comunidad/actividad/';"><img
-                            src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
-                            onclick="javascript:window.location.href = '/comunidad/actividad/';">Mis actividades</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="/comunidad/actividad/" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false"
+                    onclick="javascript:window.location.href = '/comunidad/actividad/';"><img
+                        src="{% static 'img/menu/ayudo.png' %}" width="25px" class="mr-2"
+                        onclick="javascript:window.location.href = '/comunidad/actividad/';">Mis actividades</a>
             </div>
         </div>
         <div class="col">
@@ -79,8 +120,10 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Titulo: </label>
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                    placeholder="Por ejemplo: Limpieza de 2 km del Rio Rimac" name="titulo" maxlength="50" required>
+                                <input type="text" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Por ejemplo: Limpieza de 2 km del Rio Rimac" name="titulo"
+                                    maxlength="50" required>
                                 <small id="emailHelp" class="form-text text-muted">Máximo de 50 caracteres.</small>
                             </div>
                         </div>
@@ -93,7 +136,8 @@
                                     aria-describedby="emailHelp"
                                     placeholder="Por ejemplo: El rio chillon tiene 5 años acumulando basura diaria..."
                                     maxlength="250" required></textarea>
-                                <small id="emailHelp" class="form-text text-muted">Recuerda ser conciso. Máximo 250 caracteres.</small>
+                                <small id="emailHelp" class="form-text text-muted">Recuerda ser conciso. Máximo 250
+                                    caracteres.</small>
                             </div>
                         </div>
                     </div>
@@ -129,8 +173,8 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Departamento: </label>
-                                <select class="form-control">
+                                <label for="exampleInputEmail1" >Departamento: </label>
+                                <select class="form-control" id="select_departamento" onchange="cambiar_provincia();">
                                     {% if dep %}
                                     {% for x in dep %}
                                     <option value="{{x.id}}">{{x.nombre}}</option>
@@ -141,25 +185,15 @@
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Provincia: </label>
-                                <select class="form-control">
-                                    {% if prov %}
-                                    {% for x in prov %}
-                                    <option value="{{x.id}}">{{x.nombre}}</option>
-                                    {% endfor %}
-                                    {% endif %}
+                                <label for="exampleInputEmail1" >Provincia: </label>
+                                <select class="form-control" id="select_provincia" onchange="cambiar_distrito();">
                                 </select>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Distrito: </label>
-                                <select class="form-control" name="distrito">
-                                    {% if dis %}
-                                    {% for x in dis %}
-                                    <option value="{{x.id}}">{{x.nombre}}</option>
-                                    {% endfor %}
-                                    {% endif %}
+                                <select class="form-control" id="select_distrito" name="distrito">
                                 </select>
                             </div>
                         </div>
@@ -168,10 +202,13 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Escribe la dirección: </label>
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                    placeholder="Por ejemplo: Av, Jr, Calle con Nro, Mz y Lote" name="direccion" maxlength="100" required ><br>
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                    placeholder="Escribe aquí las referencias" name="referencia" maxlength="150" required>
+                                <input type="text" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Por ejemplo: Av, Jr, Calle con Nro, Mz y Lote" name="direccion"
+                                    maxlength="100" required><br>
+                                <input type="text" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="emailHelp" placeholder="Escribe aquí las referencias"
+                                    name="referencia" maxlength="150" required>
 
                             </div>
                         </div>
@@ -179,15 +216,17 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Sube la foto sobre la actividad y su descripción: </label>
+                                <label for="exampleInputEmail1">Sube la foto sobre la actividad y su descripción:
+                                </label>
                                 <input type="file" name="imagenes" class="form-control" required> <br><br>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">.</label>
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                    placeholder="Aqui detalla cosas sobre la foto" name="foto_descripcion" maxlength="25" required>
+                                <input type="text" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="emailHelp" placeholder="Aqui detalla cosas sobre la foto"
+                                    name="foto_descripcion" maxlength="25" required>
                             </div>
                         </div>
                     </div>
@@ -196,7 +235,7 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">¿A qué comunidad corresponde esta actividad?: </label>
                                 <select class="form-control" name="comunidad">
-                                    
+
                                     {% if comunidad %}
                                     {% for x in comunidad %}
                                     <option value="{{x.id_comunidad.id}}">{{x.id_comunidad.titulo}}</option>
@@ -210,13 +249,15 @@
                     <div class="row mb-5">
                         <div class="col">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">¿Qué valores se desarrollarán?: (Elija máximo cuatro)</label><br>
+                                <label for="exampleInputEmail1">¿Qué valores se desarrollarán?: (Elija máximo
+                                    cuatro)</label><br>
                                 {% if valor %}
                                 {% for x in valor %}
-                                <label><input type="checkbox" value="{{x.id}}" name="valor" onclick="cargar_valor(value);" /> {{x.titulo}}</label><br/>
+                                <label><input type="checkbox" value="{{x.id}}" name="valor"
+                                        onclick="cargar_valor(value);" /> {{x.titulo}}</label><br />
                                 {% endfor %}
                                 {% endif %}
-                                
+
                             </div>
                         </div>
                     </div>
@@ -226,7 +267,8 @@
                         </div>
                         <div class="col-4">
                             <button type="button" class="btn btn-warning"
-                                onclick="document.getElementById('crear_actividad').reset();">Limpiar el formulario</button>
+                                onclick="document.getElementById('crear_actividad').reset();">Limpiar el
+                                formulario</button>
                         </div>
                         <div class="col-4">
                             <button type="button" class="btn btn-danger"
@@ -234,12 +276,13 @@
                         </div>
                     </div>
                     <input type="text" name="valores" value="" id="v" style="display: none;">
-            
+
                 </div>
             </form>
             {% else %}
-            
-            <div class="text-center"> Tienes que iniciar sesion para poder crear una actividad. <br><br><a href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
+
+            <div class="text-center"> Tienes que iniciar sesion para poder crear una actividad. <br><br><a
+                    href="/cuenta/login/" class="btn peach-gradient btn-success">Iniciar sesion</a></div>
             {% endif %}
         </div>
     </div>

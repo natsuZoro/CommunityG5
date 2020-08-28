@@ -18,7 +18,7 @@ from django.urls import path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from CreciendoEnComunidad.views import home, buscar_palabra
 from gestionUsuarios.views import logout
-from gestionActividades.views import unirse_actividad, listar_actividad, ver_actividad, crear_actividad, categoria, culminar_actividad, actividad_certificado, actividades_realizadas
+from gestionActividades.views import unirse_actividad, listar_actividad, ver_actividad, crear_actividad, categoria, culminar_actividad, actividad_certificado, actividades_realizadas, cambiarDist,cambiarProv
 from gestionComunidades.views import listar_comunidad, crear_comunidad, ver_comunidad, actividad_comunidad
 from gestionColectivos.views import listar_colectivo, crear_colectivo, ver_colectivo, actividad_colectivo, calificar_participantes, valores
 
@@ -58,7 +58,10 @@ urlpatterns = [
 
     path('actividad/unirse/', unirse_actividad),
 
-] + static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
+    path('cambiarProv/',cambiarProv),
+    path('cambiarDist/',cambiarDist)
+
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

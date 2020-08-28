@@ -13,7 +13,7 @@ from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from django.contrib import auth
 from datetime import datetime
-
+from django.views.generic import View
 
 # Create your views here.
 def actividad_certificado(request):
@@ -325,9 +325,39 @@ def crear_actividad(request):
     comunidad = RelacionComunidadUsuario.objects.filter(id_integrante_id=current_user.id)
     valor = Valor.objects.all()
     dep = Departamento.objects.all()
-    prov = Provincia.objects.all()
-    dis = Distrito.objects.all()
+    prov = Provincia.objects.all().select_related('id_departamento')
     categoria = Categoria.objects.all()
+    dis = Distrito.objects.all().select_related('id_provincia__id_departamento')
+
+#    for h in dis:
+                                        #t = str(h.nombre) + ' '+ str(h.id_provincia.nombre) + ' '+ str(h.id_provincia.id_departamento.nombre)
+ #       t = h.id_provincia.id
+
+#    players = Distrito.objects.all().select_related('id_provincia__id_departamento')
+#    for player in players:
+#        t = player.nombre + ' ' + player.id_provincia.nombre + ' ' + player.id_provincia.id_departamento.nombre
+#        print (t)
+
     contexto = {'dep':dep,'prov':prov, 'dis':dis,'categoria':categoria,'comunidad':comunidad,'valor':valor}
     return render(request,"actividad/crear.html",contexto)
 
+
+
+
+def cambiarProv(request):
+    cod_dep = int(request.GET.get('codigo_departamento'))
+    prov = Provincia.objects.filter(id_departamento_id=cod_dep)
+    html = '<option value=""></option>'
+    for i in prov:
+        html = html + '<option value="' + str(i.id) + '"> '+ str(i.nombre)+ '</option>'
+
+    return HttpResponse(html)
+
+def cambiarDist(request):
+    cod_prov = int(request.GET.get('codigo_provincia'))
+    dist = Distrito.objects.filter(id_provincia_id=cod_prov)
+    html = '<option value=""></option>'
+    for i in dist:
+        html = html + '<option value="' + str(i.id) + '"> '+ str(i.nombre)+ '</option>'
+
+    return HttpResponse(html)
