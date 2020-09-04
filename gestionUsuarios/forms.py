@@ -26,6 +26,7 @@ class RegistroForm(UserCreationForm):
     email = forms.CharField(widget=forms.TextInput(
         attrs={
             'class':'form-control',
+            'type':'email',
             'maxlength':'254',
         }
     ),label='Un correo electrónico')
