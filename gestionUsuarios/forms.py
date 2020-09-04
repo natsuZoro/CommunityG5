@@ -7,28 +7,34 @@ class RegistroForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(
         attrs={
             'class':'form-control',
+            'maxlength':'150',
         }
     ),label='Escribe un nombre de usuario')
     first_name = forms.CharField(widget=forms.TextInput(
         attrs={
             'class':'form-control',
+            'maxlength':'30',
         }
     ),label='Tu primer nombre')
 
     last_name = forms.CharField(widget=forms.TextInput(
         attrs={
             'class':'form-control',
+            'maxlength':'150',
         }
     ),label='Tus apellidos')
     email = forms.CharField(widget=forms.TextInput(
         attrs={
             'class':'form-control',
+            'maxlength':'254',
         }
     ),label='Un correo electrónico')
     password1 = forms.CharField(widget=forms.TextInput(
         attrs={
             'class':'form-control',
             'type':'password',
+            'maxlength':'32',
+            'minlength':'8',
         }
     ),label='Una contraseña',help_text='''
     <ul>
@@ -41,6 +47,8 @@ class RegistroForm(UserCreationForm):
         attrs={
             'class':'form-control',
             'type':'password',
+            'maxlength':'32',
+            'minlength':'8',
         }
     ),label='Repita la contraseña',help_text='Ingrese la misma contraseña que antes, para la verificación.')
     class Meta:
